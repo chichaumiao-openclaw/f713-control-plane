@@ -1,1 +1,5 @@
 {"timestamp": "2026-07-01T12:57:33.980083+00:00", "event_type": "task_submitted_from_feishu", "payload": {"message_id": "om_x100b6b64903e08a4b2e61c5282b1f7d", "text": "summarize current f713-control-plane status after git fetch fix"}}
+{"timestamp": "2026-07-01T13:28:01.052678+00:00", "event_type": "state_transition", "payload": {"state": "running"}}
+{"timestamp": "2026-07-01T13:30:41.399666+00:00", "event_type": "worker_failed", "payload": {"returncode": -15}}
+{"timestamp": "2026-07-01T13:30:41.403620+00:00", "event_type": "worker_failed", "payload": {"returncode": -15}}
+{"timestamp": "2026-07-01T13:30:41.408616+00:00", "event_type": "worker_failed", "payload": {"returncode": -15}}

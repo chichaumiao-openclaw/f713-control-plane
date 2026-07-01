@@ -1,3 +1,12 @@
 {
-  "artifacts": []
+  "artifacts": [
+    {
+      "type": "stdout",
+      "preview": ""
+    },
+    {
+      "type": "stderr",
+      "preview": "Reading additional input from stdin...\nOpenAI Codex v0.142.5\n--------\nworkdir: /hdd/chichau/current_projects\nmodel: agnes-2.0-flash\nprovider: agnes\napproval: never\nsandbox: danger-full-access\nreasoning effort: medium\nreasoning summaries: none\nsession id: 019f1ddf-ed49-7282-bb55-dec9627bf9ab\n--------\nuser\nYou are running on f713 as a Hermes task triggered from Feishu. Complete the user's request fully in the current repository context if possible. When done, write a concise final summary suitable"
+    }
+  ]
 }

@@ -4,7 +4,7 @@ from pathlib import Path
 import os
 import subprocess
 
-from .config import load_settings
+from .config import ENV_PATH, load_dotenv, load_settings
 from .store import (
     append_event,
     artifacts_path,
@@ -29,11 +29,15 @@ def _run_shell(entrypoint: str, working_dir: Path) -> subprocess.CompletedProces
 
 def _run_codex_exec(manifest: dict, working_dir: Path) -> subprocess.CompletedProcess[str]:
     settings = load_settings()
-    prompt = str(manifest.get("launch", {}).get("prompt", "")).strip()
+    launch = manifest.get("launch", {})
+    prompt = str(launch.get("prompt", "")).strip()
     if not prompt:
         raise RuntimeError("codex_exec launch requires launch.prompt")
+    load_dotenv(ENV_PATH)
     env = os.environ.copy()
     env["CODEX_HOME"] = settings.codex_home
+    codex_profile = str(launch.get("codex_profile", settings.codex_profile)).strip() or settings.codex_profile
+    codex_model = str(launch.get("codex_model", settings.codex_provider_model)).strip() or settings.codex_provider_model
     cmd = [
         settings.codex_bin,
         "exec",
@@ -42,9 +46,9 @@ def _run_codex_exec(manifest: dict, working_dir: Path) -> subprocess.CompletedPr
         "--cd",
         str(working_dir),
         "-p",
-        settings.codex_profile,
+        codex_profile,
         "-m",
-        settings.codex_provider_model,
+        codex_model,
         prompt,
     ]
     return subprocess.run(
@@ -53,6 +57,7 @@ def _run_codex_exec(manifest: dict, working_dir: Path) -> subprocess.CompletedPr
         capture_output=True,
         text=True,
         env=env,
+        timeout=1800,
     )
 
 

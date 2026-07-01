@@ -1,1 +1,3 @@
 {"timestamp": "2026-07-01T12:57:33.980664+00:00", "event_type": "task_submitted_from_feishu", "payload": {"message_id": "om_x100b6b7aedf03ca8b1dc6218324f616", "text": "summarize current f713-control-plane status and report back here after the latest restart"}}
+{"timestamp": "2026-07-01T13:30:42.122567+00:00", "event_type": "state_transition", "payload": {"state": "running"}}
+{"timestamp": "2026-07-01T13:31:26.570977+00:00", "event_type": "worker_failed", "payload": {"returncode": -15}}

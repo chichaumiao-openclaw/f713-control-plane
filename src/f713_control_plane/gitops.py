@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+import time
 import subprocess
 
 from .config import ROOT, load_settings
@@ -38,22 +39,49 @@ def ensure_repo() -> None:
         raise RuntimeError(f"{ROOT} is not a git repository")
 
 
+def _git_config_get(key: str) -> str:
+    result = _run_git(["config", "--get", key], check=False)
+    if result.returncode != 0:
+        return ""
+    return result.stdout.strip()
+
+
+def _git_config_set(key: str, value: str, retries: int = 3, sleep_seconds: float = 0.5) -> None:
+    current = _git_config_get(key)
+    if current == value:
+        return
+    last_error = ""
+    for attempt in range(retries):
+        result = _run_git(["config", key, value], check=False)
+        if result.returncode == 0:
+            return
+        last_error = result.stderr.strip() or result.stdout.strip() or f"git config {key} failed"
+        if "could not lock config file" not in last_error.lower() or attempt == retries - 1:
+            raise RuntimeError(last_error)
+        time.sleep(sleep_seconds)
+    raise RuntimeError(last_error)
+
+
 def ensure_identity() -> None:
     settings = load_settings()
     name = "chichaumiao-eng[bot]"
     email = "3037528+chichaumiao-eng[bot]@users.noreply.github.com"
-    _run_git(["config", "user.name", name])
-    _run_git(["config", "user.email", email])
-    _run_git(["config", "pull.ff", "only"])
-    _run_git(["config", "rebase.autoStash", "true"])
-    _run_git(["config", "branch.autosetuprebase", "always"])
-    _run_git(["config", f"branch.{settings.git_branch}.remote", settings.git_remote_name])
-    _run_git(["config", f"branch.{settings.git_branch}.merge", f"refs/heads/{settings.git_branch}"])
+    _git_config_set("user.name", name)
+    _git_config_set("user.email", email)
+    _git_config_set("pull.ff", "only")
+    _git_config_set("rebase.autoStash", "true")
+    _git_config_set("branch.autosetuprebase", "always")
+    _git_config_set(f"branch.{settings.git_branch}.remote", settings.git_remote_name)
+    _git_config_set(f"branch.{settings.git_branch}.merge", f"refs/heads/{settings.git_branch}")
 
 
 def has_changes() -> bool:
     result = _run_git(["status", "--porcelain"], check=True)
     return bool(result.stdout.strip())
+
+
+def has_uncommitted_changes() -> bool:
+    return has_changes()
 
 
 def current_branch() -> str:
@@ -73,8 +101,12 @@ def pull_fast_forward() -> None:
     settings = load_settings()
     if settings.git_remote_name not in _remote_names():
         return
+    if has_uncommitted_changes():
+        return
     authed_remote = _authenticated_remote_url()
-    _run_git(["fetch", authed_remote, settings.git_branch])
+    fetch = _run_git(["fetch", authed_remote, settings.git_branch], check=False)
+    if fetch.returncode != 0:
+        return
     _run_git(["reset", "--hard", "FETCH_HEAD"])
 
 

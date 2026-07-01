@@ -30,9 +30,9 @@ class Settings:
     github_app_owner: str = ""
     github_app_pem_path: str = ""
     codex_bin: str = "codex"
-    codex_profile: str = "agnes"
-    codex_provider_base_url: str = "https://apihub.agnes-ai.com/v1"
-    codex_provider_model: str = "agnes-2.0-flash"
+    codex_profile: str = "yunyi"
+    codex_provider_base_url: str = "https://rayplus.site"
+    codex_provider_model: str = "gpt-5.4"
     codex_home: str = str(CODEX_HOME)
     feishu_inbox_enabled: bool = False
     feishu_inbox_poll_seconds: int = 30
@@ -68,9 +68,9 @@ def load_settings() -> Settings:
         github_app_owner=os.environ.get("GITHUB_APP_OWNER", "").strip(),
         github_app_pem_path=os.environ.get("GITHUB_APP_PEM_PATH", "").strip(),
         codex_bin=os.environ.get("F713_CONTROL_CODEX_BIN", "codex").strip() or "codex",
-        codex_profile=os.environ.get("F713_CONTROL_CODEX_PROFILE", "agnes").strip() or "agnes",
-        codex_provider_base_url=os.environ.get("F713_CONTROL_CODEX_BASE_URL", "https://apihub.agnes-ai.com/v1").strip(),
-        codex_provider_model=os.environ.get("F713_CONTROL_CODEX_MODEL", "agnes-2.0-flash").strip(),
+        codex_profile=os.environ.get("F713_CONTROL_CODEX_PROFILE", "yunyi").strip() or "yunyi",
+        codex_provider_base_url=os.environ.get("F713_CONTROL_CODEX_BASE_URL", "https://rayplus.site").strip(),
+        codex_provider_model=os.environ.get("F713_CONTROL_CODEX_MODEL", "gpt-5.4").strip(),
         codex_home=os.environ.get("CODEX_HOME", str(CODEX_HOME)).strip() or str(CODEX_HOME),
         feishu_inbox_enabled=os.environ.get("F713_CONTROL_FEISHU_INBOX_ENABLED", "0") == "1",
         feishu_inbox_poll_seconds=int(os.environ.get("F713_CONTROL_FEISHU_INBOX_POLL_SECONDS", "30")),
