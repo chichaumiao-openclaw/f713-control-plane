@@ -5,6 +5,8 @@ src/f713_control_plane/cli.py
 src/f713_control_plane/config.py
 src/f713_control_plane/daemon.py
 src/f713_control_plane/engine.py
+src/f713_control_plane/github_auth.py
+src/f713_control_plane/gitops.py
 src/f713_control_plane/hermes.py
 src/f713_control_plane/models.py
 src/f713_control_plane/notifier.py
