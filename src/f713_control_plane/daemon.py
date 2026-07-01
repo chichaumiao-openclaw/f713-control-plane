@@ -21,6 +21,21 @@ from .store import (
 )
 
 
+def _task_result_summary(task_id: str) -> str:
+    from .store import artifacts_path, blocker_path, receipt_path
+    parts: list[str] = [f"[f713-control-plane] task `{task_id}` finished."]
+    receipt = receipt_path(task_id)
+    blocker = blocker_path(task_id)
+    artifacts = artifacts_path(task_id)
+    if receipt.exists() and receipt.read_text(encoding="utf-8").strip():
+        parts.append(receipt.read_text(encoding="utf-8").strip()[:500])
+    elif blocker.exists() and blocker.read_text(encoding="utf-8").strip():
+        parts.append(blocker.read_text(encoding="utf-8").strip()[:500])
+    elif artifacts.exists():
+        parts.append(artifacts.read_text(encoding="utf-8")[:500])
+    return "\n\n".join(parts)
+
+
 def apply_command(path: Path) -> None:
     payload = load_yaml(path)
     task_id = payload["task_id"]
@@ -52,9 +67,9 @@ def process_tasks() -> None:
             launch_task(task_id)
             state = load_state(task_id)
             if state.state == "review_ready":
-                send_text(f"[f713-control-plane] task `{task_id}` reached `review_ready`.")
+                send_text(_task_result_summary(task_id))
             elif state.state == "blocked":
-                send_text(f"[f713-control-plane] task `{task_id}` became `blocked`.")
+                send_text(_task_result_summary(task_id))
 
 
 def main() -> None:

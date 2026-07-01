@@ -3,6 +3,7 @@ from __future__ import annotations
 import time
 
 from .config import load_settings
+from .hermes_commands import import_feishu_commands
 from .notifier import send_text
 from .store import append_event, list_task_ids, load_manifest, load_state, save_state
 
@@ -57,6 +58,7 @@ def inspect_task(task_id: str) -> None:
 def main() -> None:
     settings = load_settings()
     while True:
+        import_feishu_commands()
         for task_id in list_task_ids():
             inspect_task(task_id)
         time.sleep(settings.hermes_poll_seconds)

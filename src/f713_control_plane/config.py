@@ -34,6 +34,13 @@ class Settings:
     codex_provider_base_url: str = "https://apihub.agnes-ai.com/v1"
     codex_provider_model: str = "agnes-2.0-flash"
     codex_home: str = str(CODEX_HOME)
+    feishu_inbox_enabled: bool = False
+    feishu_inbox_poll_seconds: int = 30
+    feishu_command_chat_id: str = ""
+    feishu_command_prefix: str = ""
+    hermes_default_working_dir: str = str(ROOT)
+    hermes_default_project_ref: str = "feishu"
+    hermes_default_template: str = "engineering_simple"
 
 
 def load_dotenv(path: Path = ENV_PATH) -> None:
@@ -65,4 +72,11 @@ def load_settings() -> Settings:
         codex_provider_base_url=os.environ.get("F713_CONTROL_CODEX_BASE_URL", "https://apihub.agnes-ai.com/v1").strip(),
         codex_provider_model=os.environ.get("F713_CONTROL_CODEX_MODEL", "agnes-2.0-flash").strip(),
         codex_home=os.environ.get("CODEX_HOME", str(CODEX_HOME)).strip() or str(CODEX_HOME),
+        feishu_inbox_enabled=os.environ.get("F713_CONTROL_FEISHU_INBOX_ENABLED", "0") == "1",
+        feishu_inbox_poll_seconds=int(os.environ.get("F713_CONTROL_FEISHU_INBOX_POLL_SECONDS", "30")),
+        feishu_command_chat_id=os.environ.get("FEISHU_COMMAND_CHAT_ID", "").strip(),
+        feishu_command_prefix=os.environ.get("FEISHU_COMMAND_PREFIX", "").strip(),
+        hermes_default_working_dir=os.environ.get("F713_CONTROL_HERMES_WORKING_DIR", str(ROOT)).strip() or str(ROOT),
+        hermes_default_project_ref=os.environ.get("F713_CONTROL_HERMES_PROJECT_REF", "feishu").strip() or "feishu",
+        hermes_default_template=os.environ.get("F713_CONTROL_HERMES_TEMPLATE", "engineering_simple").strip() or "engineering_simple",
     )

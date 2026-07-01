@@ -48,6 +48,23 @@ GitHub auth flow:
 - `f713d`: task poller and state-machine daemon
 - `hermesd`: watchdog for simple bounded tasks
 
+## Feishu Hermes Loop
+
+`Hermes` can now operate as a Feishu-triggered execution loop on `f713`:
+
+1. you send a text command in a configured Feishu chat
+2. `hermesd` polls that chat
+3. the message is converted into a `codex_exec` task
+4. the task runs on `f713` using the configured `Agnes` model/token source
+5. `f713d` writes runtime state and sends a concise result summary back to Feishu
+
+Required env keys:
+
+- `F713_CONTROL_FEISHU_INBOX_ENABLED=1`
+- `FEISHU_COMMAND_CHAT_ID=<chat_id>`
+- `FEISHU_COMMAND_PREFIX=<optional prefix such as /hermes >`
+- `OPENAI_API_KEY=<Agnes API key>`
+
 ## Repo Layout
 
 - `src/f713_control_plane/`: Python package

@@ -11,6 +11,7 @@ from .store import enqueue_notification, pop_pending_notifications
 
 TOKEN_URL = "https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal"
 MESSAGE_URL = "https://open.feishu.cn/open-apis/im/v1/messages"
+MESSAGE_LIST_URL = "https://open.feishu.cn/open-apis/im/v1/messages"
 
 
 def _token() -> str:
@@ -71,3 +72,26 @@ def flush_pending() -> None:
             failures.append(record)
     for record in failures:
         enqueue_notification(record)
+
+
+def list_messages(*, container_id_type: str = "chat", container_id: str, page_size: int = 20) -> dict[str, Any]:
+    token = _token()
+    headers = {
+        "Authorization": f"Bearer {token}",
+        "Content-Type": "application/json",
+    }
+    resp = requests.get(
+        MESSAGE_LIST_URL,
+        headers=headers,
+        params={
+            "container_id_type": container_id_type,
+            "container_id": container_id,
+            "page_size": page_size,
+        },
+        timeout=30,
+    )
+    resp.raise_for_status()
+    payload = resp.json()
+    if payload.get("code") != 0:
+        raise RuntimeError(f"Feishu list messages failed: {payload}")
+    return payload
