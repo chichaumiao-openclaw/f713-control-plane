@@ -1,0 +1,84 @@
+# f713 Control Plane
+
+`f713-control-plane` is the active V1 control runtime for the personal AI team.
+
+It replaces the former `macwork/OpenClaw` primary path with a simpler chain:
+
+- `MacBook -> GitHub control repo -> f713-control-plane -> worker -> receipt/blocker/artifacts -> Feishu summary`
+
+This repository is the control repo itself. It must hold:
+
+- task manifests
+- command intake
+- runtime state snapshots
+- receipts
+- blockers
+- machine-generated artifacts metadata
+
+## Current Runtime Contract
+
+The control contract is now fixed:
+
+- `MacBook` submits or updates tasks by editing this repo and pushing to GitHub
+- `f713d` pulls, executes, writes runtime state, then pushes results back
+- Git authentication on `f713` uses the GitHub App `chichaumiao-eng`
+- `hermesd` only does bounded continuation checks for simple tasks
+- `Feishu` is used for outbound state summaries, not as the primary task ledger
+
+## GitHub App Identity
+
+- app slug: `chichaumiao-eng`
+- app id: `3037528`
+- installation id: `114826612`
+- owner: `chichaumiao-openclaw`
+
+The GitHub App PEM must be stored on `f713` at:
+
+- `/home/chichau/.config/f713-control-plane/chichaumiao-eng.private-key.pem`
+
+GitHub auth flow:
+
+1. sign JWT with the PEM
+2. exchange for installation token
+3. use HTTPS remote with `x-access-token`
+
+## Runtime Roles
+
+- `f713ctl`: operator CLI
+- `f713d`: task poller and state-machine daemon
+- `hermesd`: watchdog for simple bounded tasks
+
+## Repo Layout
+
+- `src/f713_control_plane/`: Python package
+- `bin/`: startup and maintenance wrappers
+- `templates/`: manifest and runtime templates
+- `tasks/`: task truth
+- `commands/`: command-file intake
+- `runtime/`: local logs and pending notification queues
+- `docs/`: setup and operator notes
+
+## Basic Flow
+
+1. `MacBook` runs `f713ctl submit|resume|cancel`
+2. local task or command files are written into this repo
+3. the local repo commits and pushes to GitHub
+4. `f713d` fetches and fast-forward pulls
+5. the daemon processes commands and launches eligible tasks
+6. runtime outputs are written under `tasks/<task_id>/runtime/`
+7. `f713d` commits and pushes runtime updates back to GitHub
+8. Feishu receives outbound notifications for important transitions
+
+## Execution Modes
+
+Each task must use one of these launch modes:
+
+- `shell`
+  - execute a shell entrypoint in a working directory
+- `codex_exec`
+  - execute `codex exec` in a working directory using a prompt stored in the manifest
+
+Default runtime policy:
+
+- `engineering_simple` may be checked and requeued by `hermesd`
+- `research_long` must stop at a human gate and is not auto-continued

@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SESSION_NAME="f713-control"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
+LOG_DIR="${REPO_ROOT}/runtime/logs"
+CONDA_SH=""
+
+if [[ -f "${HOME}/miniconda3/etc/profile.d/conda.sh" ]]; then
+  CONDA_SH="${HOME}/miniconda3/etc/profile.d/conda.sh"
+elif [[ -f "${HOME}/anaconda3/etc/profile.d/conda.sh" ]]; then
+  CONDA_SH="${HOME}/anaconda3/etc/profile.d/conda.sh"
+fi
+
+mkdir -p "${LOG_DIR}"
+
+tmux has-session -t "${SESSION_NAME}" 2>/dev/null && {
+  echo "tmux session ${SESSION_NAME} already exists"
+  exit 0
+}
+
+printf -v DAEMON_CMD 'cd %q' "${REPO_ROOT}"
+if [[ -n "${CONDA_SH}" ]]; then
+  printf -v DAEMON_CMD '%s && source %q && conda activate f713ctl' "${DAEMON_CMD}" "${CONDA_SH}"
+fi
+printf -v DAEMON_CMD '%s && exec f713d >> %q 2>&1' "${DAEMON_CMD}" "${LOG_DIR}/daemon.log"
+
+printf -v HERMES_CMD 'cd %q' "${REPO_ROOT}"
+if [[ -n "${CONDA_SH}" ]]; then
+  printf -v HERMES_CMD '%s && source %q && conda activate f713ctl' "${HERMES_CMD}" "${CONDA_SH}"
+fi
+printf -v HERMES_CMD '%s && exec hermesd >> %q 2>&1' "${HERMES_CMD}" "${LOG_DIR}/hermes.log"
+
+tmux new-session -d -s "${SESSION_NAME}" -n daemon "bash -lc ${DAEMON_CMD@Q}"
+tmux new-window -t "${SESSION_NAME}" -n hermes "bash -lc ${HERMES_CMD@Q}"
+echo "started ${SESSION_NAME}"

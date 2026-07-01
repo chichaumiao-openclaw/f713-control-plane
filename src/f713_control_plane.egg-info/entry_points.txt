@@ -1,0 +1,4 @@
+[console_scripts]
+f713ctl = f713_control_plane.cli:main
+f713d = f713_control_plane.daemon:main
+hermesd = f713_control_plane.hermes:main

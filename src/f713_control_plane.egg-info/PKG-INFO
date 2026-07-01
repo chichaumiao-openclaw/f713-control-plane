@@ -1,0 +1,41 @@
+Metadata-Version: 2.4
+Name: f713-control-plane
+Version: 0.1.0
+Summary: GitHub-backed control runtime for f713 task orchestration
+Requires-Python: >=3.11
+Description-Content-Type: text/markdown
+Requires-Dist: PyYAML>=6.0
+Requires-Dist: requests>=2.31.0
+
+# f713 Control Plane
+
+`f713-control-plane` is the active V1 control runtime for the personal AI team.
+
+It replaces the former `macwork/OpenClaw` primary path with a simpler chain:
+
+- `MacBook -> GitHub control repo -> f713-control-plane -> worker -> receipt/blocker/artifacts -> Feishu summary`
+
+## Runtime Roles
+
+- `f713ctl`: operator CLI
+- `f713d`: task poller and state-machine daemon
+- `hermesd`: watchdog for simple bounded tasks
+
+## Repo Layout
+
+- `src/f713_control_plane/`: Python package
+- `bin/`: startup and maintenance wrappers
+- `templates/`: manifest and runtime templates
+- `tasks/`: task truth
+- `commands/`: command-file intake
+- `runtime/`: local logs and pending notification queues
+- `docs/`: setup and operator notes
+
+## Basic Flow
+
+1. `MacBook` runs `f713ctl submit`
+2. a task directory is created under `tasks/<task_id>`
+3. `f713d` picks the task and moves it to `running`
+4. the daemon writes `state`, `events`, `receipt` or `blocker`
+5. `hermesd` checks simple tasks every `5 min`
+6. Feishu receives outbound notifications for important transitions

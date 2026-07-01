@@ -1,0 +1,25 @@
+schema_version: 1
+task_id: ${task_id}
+title: ${title}
+task_class: engineering_simple
+project_ref: ${project_ref}
+created_by: ${created_by}
+launch:
+  mode: ${launch_mode}
+  working_dir: ${working_dir}
+  entrypoint: ${entrypoint}
+  prompt: ${prompt}
+  codex_profile: agnes
+inputs: []
+expected_outputs: []
+completion_checks:
+  - "worker exits 0"
+watchdog:
+  enabled: true
+  interval_min: 5
+  max_retries: 3
+  stall_cutoff: 2
+notify:
+  feishu: true
+human_gate:
+  required: false

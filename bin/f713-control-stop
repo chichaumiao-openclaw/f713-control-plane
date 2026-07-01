@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SESSION_NAME="f713-control"
+
+if tmux has-session -t "${SESSION_NAME}" 2>/dev/null; then
+  tmux kill-session -t "${SESSION_NAME}"
+  echo "stopped ${SESSION_NAME}"
+else
+  echo "session ${SESSION_NAME} not running"
+fi

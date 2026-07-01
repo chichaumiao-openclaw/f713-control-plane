@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "f713-control-plane"
+version = "0.1.0"
+description = "GitHub-backed control runtime for f713 task orchestration"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "PyYAML>=6.0",
+  "requests>=2.31.0",
+]
+
+[project.scripts]
+f713ctl = "f713_control_plane.cli:main"
+f713d = "f713_control_plane.daemon:main"
+hermesd = "f713_control_plane.hermes:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
