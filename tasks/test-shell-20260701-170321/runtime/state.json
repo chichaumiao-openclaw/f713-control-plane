@@ -2,9 +2,9 @@
   "task_id": "test-shell-20260701-170321",
   "state": "review_ready",
   "retries": 2,
-  "last_progress_marker": "process_exit_0",
+  "last_progress_marker": "completed|checks=1|outputs=0",
   "last_worker_status": "completed",
-  "continuation_count": 2,
+  "continuation_count": 0,
   "notification_status": {},
   "metadata": {}
 }

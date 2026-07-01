@@ -89,7 +89,7 @@ def import_feishu_commands() -> int:
     ensure_identity()
     pull_fast_forward()
     seen = _load_seen()
-    payload = list_messages(container_id=settings.feishu_command_chat_id, page_size=20)
+    payload = list_messages(container_id=settings.feishu_command_chat_id, page_size=50)
     items = payload.get("data", {}).get("items", [])
     imported = 0
     for item in reversed(items):
