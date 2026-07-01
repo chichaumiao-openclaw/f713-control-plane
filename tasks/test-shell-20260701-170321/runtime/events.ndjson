@@ -1,1 +1,3 @@
 {"timestamp": "2026-07-01T09:07:30.769833+00:00", "event_type": "task_submitted", "payload": {"created_by": "chichau"}}
+{"timestamp": "2026-07-01T09:31:12.842696+00:00", "event_type": "state_transition", "payload": {"state": "running"}}
+{"timestamp": "2026-07-01T09:31:12.844990+00:00", "event_type": "worker_completed", "payload": {"returncode": 0}}

@@ -1,3 +1,12 @@
 {
-  "artifacts": []
+  "artifacts": [
+    {
+      "type": "stdout",
+      "preview": ""
+    },
+    {
+      "type": "stderr",
+      "preview": ""
+    }
+  ]
 }
