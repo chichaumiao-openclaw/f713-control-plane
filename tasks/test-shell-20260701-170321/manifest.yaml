@@ -1,0 +1,25 @@
+schema_version: 1
+task_id: test-shell-20260701-170321
+title: shell e2e validation
+task_class: engineering_simple
+project_ref: f713-control-plane
+created_by: chichau
+launch:
+  mode: shell
+  working_dir: /hdd/chichau/current_projects/f713-control-plane
+  entrypoint: printf "shell_e2e_ok\n" > runtime/logs/test-shell-20260701-170321.txt
+  prompt: ""
+  codex_profile: agnes
+inputs: []
+expected_outputs: []
+completion_checks:
+  - worker exits 0
+watchdog:
+  enabled: true
+  interval_min: 5
+  max_retries: 3
+  stall_cutoff: 2
+notify:
+  feishu: true
+human_gate:
+  required: false
