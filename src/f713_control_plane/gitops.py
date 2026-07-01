@@ -17,6 +17,22 @@ def _run_git(args: list[str], *, env: dict[str, str] | None = None, check: bool 
     )
 
 
+def _remote_names() -> list[str]:
+    return _run_git(["remote"], check=True).stdout.split()
+
+
+def _authenticated_remote_url() -> str:
+    settings = load_settings()
+    token = get_installation_token()
+    if settings.git_remote_name in _remote_names():
+        remote = _run_git(["remote", "get-url", settings.git_remote_name], check=True).stdout.strip()
+        if remote.startswith("https://"):
+            return remote.replace("https://", f"https://x-access-token:{token}@", 1)
+    owner = settings.github_app_owner
+    repo_name = ROOT.name
+    return f"https://x-access-token:{token}@github.com/{owner}/{repo_name}.git"
+
+
 def ensure_repo() -> None:
     if not (ROOT / ".git").exists():
         raise RuntimeError(f"{ROOT} is not a git repository")
@@ -55,27 +71,19 @@ def commit_all(message: str) -> bool:
 
 def pull_fast_forward() -> None:
     settings = load_settings()
-    remote = _run_git(["remote"], check=True)
-    if settings.git_remote_name not in remote.stdout.split():
+    if settings.git_remote_name not in _remote_names():
         return
-    _run_git(["fetch", settings.git_remote_name, settings.git_branch])
-    _run_git(["pull", "--ff-only", settings.git_remote_name, settings.git_branch])
+    authed_remote = _authenticated_remote_url()
+    _run_git(["fetch", authed_remote, settings.git_branch])
+    _run_git(["reset", "--hard", "FETCH_HEAD"])
 
 
 def push_with_app_auth() -> None:
     settings = load_settings()
-    remote_names = _run_git(["remote"], check=True).stdout.split()
+    remote_names = _remote_names()
     if settings.git_remote_name not in remote_names:
         return
-    remote_result = _run_git(["remote", "get-url", settings.git_remote_name], check=True)
-    remote = remote_result.stdout.strip()
-    token = get_installation_token()
-    if remote.startswith("https://"):
-        authed = remote.replace("https://", f"https://x-access-token:{token}@", 1)
-    else:
-        owner = settings.github_app_owner
-        repo_name = ROOT.name
-        authed = f"https://x-access-token:{token}@github.com/{owner}/{repo_name}.git"
+    authed = _authenticated_remote_url()
     result = subprocess.run(
         ["git", "-C", str(ROOT), "push", authed, f"HEAD:{settings.git_branch}"],
         capture_output=True,
@@ -84,10 +92,9 @@ def push_with_app_auth() -> None:
     )
     if result.returncode == 0:
         return
-    _run_git(["fetch", settings.git_remote_name, settings.git_branch])
-    _run_git(["rebase", f"{settings.git_remote_name}/{settings.git_branch}"])
-    refreshed = get_installation_token(force_refresh=True)
-    retry_remote = authed.replace(token, refreshed)
+    retry_remote = _authenticated_remote_url()
+    _run_git(["fetch", retry_remote, settings.git_branch])
+    _run_git(["rebase", "FETCH_HEAD"])
     retry = subprocess.run(
         ["git", "-C", str(ROOT), "push", retry_remote, f"HEAD:{settings.git_branch}"],
         capture_output=True,
