@@ -1,9 +1,9 @@
 {
   "task_id": "feishu-om-x100b6b6dfcad9ca0b15b4415cef7631",
-  "state": "approved",
+  "state": "review_ready",
   "retries": 0,
-  "last_progress_marker": "",
-  "last_worker_status": "",
+  "last_progress_marker": "process_exit_0",
+  "last_worker_status": "completed",
   "continuation_count": 0,
   "notification_status": {},
   "metadata": {}

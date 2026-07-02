@@ -1,3 +1,12 @@
 {
-  "artifacts": []
+  "artifacts": [
+    {
+      "type": "stdout",
+      "preview": "Created `/hdd/chichau/test` successfully.\n"
+    },
+    {
+      "type": "stderr",
+      "preview": "Reading additional input from stdin...\nOpenAI Codex v0.142.5\n--------\nworkdir: /hdd/chichau/current_projects\nmodel: gpt-5.4\nprovider: yunyi\napproval: never\nsandbox: danger-full-access\nreasoning effort: medium\nreasoning summaries: none\nsession id: 019f1feb-7aa7-7330-a147-48253125fd16\n--------\nuser\nYou are running on f713 as a Hermes task triggered from Feishu. Complete the user's request fully in the current repository context if possible. When done, write a concise final summary suitable for sen"
+    }
+  ]
 }

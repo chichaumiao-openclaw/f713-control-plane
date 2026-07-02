@@ -1,0 +1,25 @@
+schema_version: 1
+task_id: feishu-om-x100b6b6da9ffc0a0b2976be16e96680
+title: "Feishu Hermes task: mkdir at /hdd/chichau/test1"
+task_class: engineering_simple
+project_ref: feishu
+created_by: feishu
+launch:
+  mode: codex_exec
+  working_dir: /hdd/chichau/current_projects
+  entrypoint: ""
+  prompt: "You are running on f713 as a Hermes task triggered from Feishu. Complete the user's request fully in the current repository context if possible. When done, write a concise final summary suitable for sending back to Feishu.\n\nUser request from Feishu:\nmkdir at /hdd/chichau/test1\n"
+  codex_profile: yunyi
+inputs: []
+expected_outputs: []
+completion_checks:
+  - "worker exits 0"
+watchdog:
+  enabled: true
+  interval_min: 5
+  max_retries: 3
+  stall_cutoff: 2
+notify:
+  feishu: true
+human_gate:
+  required: false

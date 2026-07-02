@@ -1,1 +1,3 @@
 {"timestamp": "2026-07-01T23:01:08.531476+00:00", "event_type": "task_submitted_from_feishu", "payload": {"message_id": "om_x100b6b6dfcad9ca0b15b4415cef7631", "text": "mkdir at /hdd/chichau/test"}}
+{"timestamp": "2026-07-01T23:02:33.634751+00:00", "event_type": "state_transition", "payload": {"state": "running"}}
+{"timestamp": "2026-07-01T23:02:45.366581+00:00", "event_type": "worker_completed", "payload": {"returncode": 0}}
